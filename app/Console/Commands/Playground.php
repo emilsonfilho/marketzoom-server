@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Product;
 use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -33,5 +34,9 @@ class Playground extends Command
          * Para quando preciso for uma factory de lojinhas virtuais
          */
         // Shop::factory()->has(User::factory(['user_type_id' => 2]))->create();
+
+        // Product::factory()->create();
+
+        $this->info('Tudo certo!');
     }
 }

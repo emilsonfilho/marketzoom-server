@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Models\User;
@@ -36,6 +37,8 @@ class Playground extends Command
         // Shop::factory()->has(User::factory(['user_type_id' => 2]))->create();
 
         // Product::factory()->create();
+
+        // Cart::factory()->create();
 
         $this->info('Tudo certo!');
     }

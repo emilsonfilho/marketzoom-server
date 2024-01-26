@@ -35,7 +35,6 @@ class UpdateUserRequest extends FormRequest
             'name.string' => 'O campo de nome deve ser uma string',
             'email.required' => 'O campo de email é obrigatório.',
             'email.email' => 'O campo de e-mail deve ser um email válido.',
-            'password.regex' => 'O campo de senha deve conter letras maiúsculas e minúsculas e pelo menos um número e deve ter entre 8 e 36 caracteres.',
             'profile.file' => 'O campo de perfil deve ser um arquivo de imagem.',
         ];
     }

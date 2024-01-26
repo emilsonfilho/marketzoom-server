@@ -19,14 +19,6 @@ class UserPolicy
         return null;
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, User $model): bool
-    {
-        return (isset($user->shop_id) && isset($model->shop_id)) && $user->shop_id === $model->shop_id;
-    }
-
     public function update(User $user, User $model): bool
     {
         return $user->id === $model->id;

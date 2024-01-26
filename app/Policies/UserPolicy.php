@@ -34,10 +34,4 @@ class UserPolicy
     {
         return $user->id === $model->id;
     }
-
-    // Policy para se retirar da loja
-        // Se só tiver duas pessoas, a loja acaba
-        // Caso não,
-
-    // Policy para
 }

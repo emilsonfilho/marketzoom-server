@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -41,6 +42,20 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
         $user->update($request->validated());
+
+        return response()->json(new UserResource($user->load(['userType', 'shop', 'shop.admin'])));
+    }
+
+    /**
+     * PUT api/users/{user}/reset-password
+     */
+    public function resetPassword(UpdateUserPasswordRequest $request, User $user): JsonResponse
+    {
+        $request->validated();
+
+        $user->update([
+            'password' => bcrypt($request->get('new_password')),
+        ]);
 
         return response()->json(new UserResource($user->load(['userType', 'shop', 'shop.admin'])));
     }

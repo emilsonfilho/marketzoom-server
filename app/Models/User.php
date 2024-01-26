@@ -5,7 +5,6 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -28,6 +27,10 @@ class User extends Authenticatable
         'email',
         'password',
         'profile',
+    ];
+
+    protected $attributes = [
+        'user_type_id' => 3,
     ];
 
     /**
@@ -77,6 +80,16 @@ class User extends Authenticatable
      */
     public function userType(): BelongsTo
     {
-        return $this->belongsTo(UserType::class);
+        return $this->belongsTo(UserType::class, 'user_type_id');
+    }
+
+    /**
+     * Get all of the car for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function cart(): HasOne
+    {
+        return $this->hasOne(Cart::class);
     }
 }

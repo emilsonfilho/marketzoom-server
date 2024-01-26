@@ -40,7 +40,7 @@ class Shop extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function user(): BelongsTo
+    public function admin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'admin_id', 'id');
     }

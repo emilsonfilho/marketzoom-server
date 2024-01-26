@@ -14,18 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserTypeSeeder::class,
+            UserSeeder::class,
         ]);
-
-        \App\Models\User::factory([
-            'user_type_id' => 1,
-            'name' => 'admin',
-            'email' => 'admin@email.com',
-            'password' => 'admin',
-        ])->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }

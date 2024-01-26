@@ -41,6 +41,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
         $user->update($request->validated());
+
         return response()->json(new UserResource($user->load(['userType', 'shop', 'shop.admin'])));
     }
 

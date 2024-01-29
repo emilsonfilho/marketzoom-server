@@ -25,9 +25,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('/users', UserController::class);
 // Route::apiResource('/user_types', UserTypeController::class);
-Route::apiResource('/products', ProductController::class);
 
 Route::put('/users/{user}/salesperson', [UserController::class, 'makingSalesperson']);
 Route::put('/users/{user}/reset-password', [UserController::class, 'resetPassword']);
 
-Route::put('/products/{product}/change-image', [ProductController::class, 'updateProductImage']);
+Route::prefix('products')->group(function () {
+    Route::apiResource('/', ProductController::class);
+    Route::put('/{product}/change-image', [ProductController::class, 'updateProductImage']);
+});

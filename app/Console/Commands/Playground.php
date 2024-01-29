@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Cart;
+use App\Models\Comment as ModelsComment;
 use App\Models\Product;
 use App\Models\Shop;
 use App\Models\User;
@@ -39,6 +40,8 @@ class Playground extends Command
         // Product::factory()->create();
 
         // Cart::factory()->create();
+
+        // ModelsComment::factory()->create();
 
         $this->info('Tudo certo!');
     }

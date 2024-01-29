@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserTypeController;
 use Illuminate\Http\Request;
@@ -23,7 +24,12 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/users/{user}',);
 
 Route::apiResource('/users', UserController::class);
-Route::apiResource('/user_types', UserTypeController::class);
+// Route::apiResource('/user_types', UserTypeController::class);
 
 Route::put('/users/{user}/salesperson', [UserController::class, 'makingSalesperson']);
 Route::put('/users/{user}/reset-password', [UserController::class, 'resetPassword']);
+
+Route::prefix('products')->group(function () {
+    Route::apiResource('/', ProductController::class);
+    Route::put('/{product}/change-image', [ProductController::class, 'updateProductImage']);
+});

@@ -36,8 +36,6 @@ class UpdateUserPasswordRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.string' => 'O campo usuário deve ser uma string.',
-            'user_id.exists' => 'O usuário não existe.',
             'current_password.string' => 'O campo senha atual deve ser uma string.',
             'current_password.current_password' => 'A senha atual não confere.',
             'new_password.required' => 'O campo nova senha deve ser obrigatório.',

@@ -44,4 +44,14 @@ class Shop extends Model
     {
         return $this->belongsTo(User::class, 'admin_id', 'id');
     }
+
+    /**
+     * Get all of the products for the Shop
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
 }

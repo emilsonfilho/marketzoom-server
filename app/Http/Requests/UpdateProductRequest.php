@@ -11,7 +11,7 @@ class UpdateProductRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,25 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['required', 'string'],
+            'price' => ['required', 'integer'],
+            'stock_quantity' => ['required', 'integer', 'gt:0'],
+            'details' => ['required', 'string'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'O campo de nome é obrigatório.',
+            'name.string' => 'O campo de nome deve ser uma string.',
+            'price.required' => 'O campo de preço é obrigatório.',
+            'price.integer' => 'O campo de preço deve ser um número.',
+            'stock_quantity.required' => 'A quantidade disponível em estoque é obrigatória.',
+            'stock_quantity.integer' => 'A quantidade disponível em estoque deve ser um número.',
+            'stock_quantity.gt' => 'A quantidade disponível em estoque deve ser maior que zero.',
+            'details.required' => 'A descrição do prduto é obrigatória.',
+            'details.string' => 'A descrição do produto deve ser uma string.',
         ];
     }
 }

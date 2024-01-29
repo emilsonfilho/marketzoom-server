@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserTypeController;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,4 +35,8 @@ Route::put('/users/{user}/reset-password', [UserController::class, 'resetPasswor
 Route::prefix('products')->group(function () {
     Route::apiResource('/', ProductController::class);
     Route::put('/{product}/change-image', [ProductController::class, 'updateProductImage']);
+});
+
+Route::prefix('comments')->group(function () {
+    Route::apiResource('/', CommentController::class);
 });

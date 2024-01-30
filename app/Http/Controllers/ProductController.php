@@ -8,7 +8,6 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Knuckles\Scribe\Attributes\Group;
 use Symfony\Component\HttpFoundation\Response;

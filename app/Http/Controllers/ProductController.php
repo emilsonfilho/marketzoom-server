@@ -58,6 +58,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $this->setRatings($product);
         return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user'])));
     }
 

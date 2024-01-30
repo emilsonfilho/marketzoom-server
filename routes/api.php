@@ -23,15 +23,14 @@ use Illuminate\Support\Facades\Route;
 // Route::post('/users', [UserController::class, 'store']);
 // Route::get('/users/{user}',);
 
+Route::apiResource('/users', UserController::class);
+Route::apiResource('/products', ProductController::class);
 
 Route::prefix('users')->group(function () {
-    Route::apiResource('/', UserController::class);
-
     Route::put('/{user}/salesperson', [UserController::class, 'makingSalesperson']);
     Route::put('/{user}/reset-password', [UserController::class, 'resetPassword']);
 });
 
 Route::prefix('products')->group(function () {
-    Route::apiResource('/', ProductController::class);
     Route::put('/{product}/change-image', [ProductController::class, 'updateProductImage']);
 });

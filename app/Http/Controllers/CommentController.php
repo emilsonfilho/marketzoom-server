@@ -2,47 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\UpdateCommentRequest;
+use App\Http\Resources\CommentResource;
+use App\Models\Comment;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class CommentController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Store a newly created comment in storage.
      */
-    public function index()
+    public function store(StoreCommentRequest $request): JsonResponse
     {
-        //
+        $result = Comment::create($request->validated());
+
+        return response()->json(new CommentResource($result->load(['user', 'product'])));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Display the specified comment.
      */
-    public function store(Request $request)
+    public function show(Comment $comment): JsonResponse
     {
-        //
+        return response()->json(new CommentResource($comment->load(['user', 'product'])));
     }
 
     /**
-     * Display the specified resource.
+     * Update the specified comment in storage.
      */
-    public function show(string $id)
+    public function update(UpdateCommentRequest $request, Comment $comment): JsonResponse
     {
-        //
+        $comment->update($request->validated());
+
+        return response()->json(new CommentResource($comment->load(['user', 'product'])));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Remove the specified comment from storage.
      */
-    public function update(Request $request, string $id)
+    public function destroy(Comment $comment): JsonResponse
     {
-        //
-    }
+        $comment->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

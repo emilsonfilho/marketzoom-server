@@ -25,6 +25,7 @@ class ProductResource extends JsonResource
             'image' => $this->image,
             'user' => new UserResource($this->whenLoaded('user')),
             'shop' => new ShopResource($this->whenLoaded('shop')),
+            'comments' => CommentResource::collection($this->whenLoaded('comments')),
         ];
     }
 }

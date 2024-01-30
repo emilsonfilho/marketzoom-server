@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 Route::apiResource('/users', UserController::class);
 Route::apiResource('/products', ProductController::class);
 Route::apiResource('/comments', CommentController::class);
-// Route::apiResource('/user_types', UserTypeController::class);
+Route::apiResource('/user_types', UserTypeController::class);
 
 Route::put('/users/{user}/salesperson', [UserController::class, 'makingSalesperson']);
 Route::put('/users/{user}/reset-password', [UserController::class, 'resetPassword']);

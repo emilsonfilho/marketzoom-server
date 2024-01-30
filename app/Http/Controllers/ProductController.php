@@ -22,7 +22,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $result = Product::with(['user', 'shop', 'comments'])->where('stock_quantity', '<>', 0)->get();
+        $result = Product::with(['user', 'shop', 'comments', 'comments.user'])->where('stock_quantity', '<>', 0)->get();
 
         return response()->json(ProductResource::collection($result));
     }

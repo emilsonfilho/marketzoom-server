@@ -8,7 +8,6 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Knuckles\Scribe\Attributes\Group;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,13 +22,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $result = Product::with(['user', 'shop', 'comments', 'comments.user'])
-            ->where('stock_quantity', '<>', 0)
-            ->get();
-
-        foreach ($result as $data) {
-            $this->setRatings($data);
-        }
+        $result = Product::with(['user', 'shop', 'comments', 'comments.user'])->where('stock_quantity', '<>', 0)->get();
 
         return response()->json(ProductResource::collection($result));
     }
@@ -58,7 +51,6 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $this->setRatings($product);
         return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user'])));
     }
 
@@ -70,7 +62,6 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product)
     {
         $product->update($request->validated());
-        $this->setRatings($product);
 
         return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user'])));
     }
@@ -89,7 +80,6 @@ class ProductController extends Controller
         $data['image'] = Storage::disk('public')->put('products', $data['image']);
 
         $product->update($data);
-        $this->setRatings($product);
 
         return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user'])));
     }
@@ -104,11 +94,5 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
-    }
-
-    private function setRatings($item)
-    {
-        $item['total_ratings'] = $item->comments->count('rating');
-        $item['average_rating'] = $item['total_ratings'] > 0 ? $item->comments->sum('rating') / $item['total_ratings'] : 0;
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ProductController;
@@ -30,6 +31,7 @@ Route::apiResource('/users', UserController::class);
 Route::apiResource('/products', ProductController::class);
 Route::apiResource('/comments', CommentController::class);
 Route::apiResource('/user_types', UserTypeController::class);
+Route::apiResource('/categories', CategoryController::class);
 
 Route::prefix('users')->group(function () {
     Route::put('/{user}/salesperson', [UserController::class, 'makingSalesperson']);

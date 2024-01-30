@@ -22,7 +22,7 @@ class ProductFactory extends Factory
                 'user_type_id' => 2
             ]),
             'name' => fake()->name(),
-            'price' => fake()->randomNumber(),
+            'price' => fake()->numberBetween(1, 999),
             'stock_quantity' => fake()->randomDigitNotZero(),
             'details' => fake()->paragraph(),
         ];

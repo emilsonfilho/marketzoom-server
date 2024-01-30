@@ -22,7 +22,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $result = Product::with(['user', 'shop'])->where('stock_quantity', '<>', 0)->get();
+        $result = Product::with(['user', 'shop', 'comments', 'comments.user'])->where('stock_quantity', '<>', 0)->get();
 
         return response()->json(ProductResource::collection($result));
     }
@@ -41,7 +41,7 @@ class ProductController extends Controller
 
         $result = Product::create($data);
 
-        return response()->json(new ProductResource($result->load(['user', 'shop'])));
+        return response()->json(new ProductResource($result->load(['user', 'shop', 'comments', 'comments.user'])));
     }
 
     /**
@@ -51,7 +51,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return response()->json(new ProductResource($product->load(['user', 'shop'])));
+        return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user'])));
     }
 
     /**
@@ -63,7 +63,7 @@ class ProductController extends Controller
     {
         $product->update($request->validated());
 
-        return response()->json(new ProductResource($product->load(['user', 'shop'])));
+        return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user'])));
     }
 
     /**
@@ -81,7 +81,7 @@ class ProductController extends Controller
 
         $product->update($data);
 
-        return response()->json(new ProductResource($product->load(['user', 'shop'])));
+        return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user'])));
     }
 
     /**

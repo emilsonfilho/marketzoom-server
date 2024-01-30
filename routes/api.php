@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserTypeController;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +28,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::apiResource('/users', UserController::class);
 Route::apiResource('/products', ProductController::class);
+Route::apiResource('/comments', CommentController::class);
+Route::apiResource('/user_types', UserTypeController::class);
 
 Route::prefix('users')->group(function () {
     Route::put('/{user}/salesperson', [UserController::class, 'makingSalesperson']);

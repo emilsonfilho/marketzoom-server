@@ -31,8 +31,10 @@ Route::apiResource('/products', ProductController::class);
 Route::apiResource('/comments', CommentController::class);
 Route::apiResource('/user_types', UserTypeController::class);
 
-Route::put('/users/{user}/salesperson', [UserController::class, 'makingSalesperson']);
-Route::put('/users/{user}/reset-password', [UserController::class, 'resetPassword']);
+Route::prefix('users')->group(function () {
+    Route::put('/{user}/salesperson', [UserController::class, 'makingSalesperson']);
+    Route::put('/{user}/reset-password', [UserController::class, 'resetPassword']);
+});
 
 Route::prefix('products')->group(function () {
     Route::put('/{product}/change-image', [ProductController::class, 'updateProductImage']);

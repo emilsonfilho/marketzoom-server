@@ -23,6 +23,8 @@ class ProductResource extends JsonResource
             'stock_quantity' => $this->stock_quantity,
             'details' => $this->details,
             'image' => $this->image,
+            'total_ratings' => $this->total_ratings,
+            'average_rating' => $this->average_rating,
             'user' => new UserResource($this->whenLoaded('user')),
             'shop' => new ShopResource($this->whenLoaded('shop')),
             'comments' => CommentResource::collection($this->whenLoaded('comments')),

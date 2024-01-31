@@ -19,10 +19,9 @@ class ShopFactory extends Factory
      */
     public function definition(): array
     {
+        $user = User::factory()->create();
         return [
-            'admin_id' => User::factory([
-                'user_type_id' => 2
-            ]),
+            'admin_id' => $user->id,
             'name' => fake()->name(),
             'slogan' => fake()->sentence(),
             'active' => 1,
@@ -35,10 +34,7 @@ class ShopFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Shop $shop) {
-            $shop->user()->update([
-                'shop_id' => $shop->id,
-                'user_type_id' => 2
-            ]);
+            $shop->admin()->update(['shop_id' => $shop->id]);
         });
     }
 }

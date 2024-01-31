@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductImageRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Models\Comment;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -104,6 +105,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        $product->comments()->forceDelete();
         $product->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);

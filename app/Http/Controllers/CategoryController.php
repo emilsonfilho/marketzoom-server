@@ -6,6 +6,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Models\CategoryProduct;
 use Knuckles\Scribe\Attributes\Group;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -75,6 +76,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        CategoryProduct::where('category_id', $category->id)->delete();
         $category->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);

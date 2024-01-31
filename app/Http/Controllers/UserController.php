@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DestroyUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -67,8 +68,20 @@ class UserController extends Controller
      *
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user): JsonResponse
+    public function destroy(DestroyUserRequest $request, User $user): JsonResponse
     {
+        $next_admin = User::with('shop')->findOrFail($request->validated('next_admin_shop_id'));
+
+        if ($user->has('administredShop')) {
+            if ($user->shop_id === $next_admin->shop_id) {
+                $next_admin->shop->update(['admin_id' => $next_admin->id]);
+            } else {
+                return response()->json(['errors' => ['next_admin_shop_id' => ['O próximo dono da loja não pertence à mesma.']]]);
+            }
+        }
+
+        $user->comments()->forceDelete();
+        $user->products()->delete();
         $user->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);

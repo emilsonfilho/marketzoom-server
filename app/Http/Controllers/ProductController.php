@@ -114,4 +114,13 @@ class ProductController extends Controller
         $item['total_ratings'] = $item->comments->count('rating');
         $item['average_rating'] = $item['total_ratings'] > 0 ? $item->comments->sum('rating') / $item['total_ratings'] : 0;
     }
+
+    public function search(string $search = '')
+    {
+        if (!$search) return response()->json(null, Response::HTTP_NO_CONTENT);
+
+        $result = Product::with(['user', 'shop', 'comments', 'comments.user'])->where('name', 'like', "%{$search}%")->get();
+
+        return response()->json(ProductResource::collection($result));
+    }
 }

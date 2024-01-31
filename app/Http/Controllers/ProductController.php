@@ -20,10 +20,11 @@ class ProductController extends Controller
      *
      * Display a listing of the available products.
      */
-    public function index()
+    public function index(string $search = '')
     {
         $result = Product::with(['user', 'shop', 'comments', 'comments.user'])
             ->where('stock_quantity', '<>', 0)
+            ->where('name', 'like', '=', '%' . $search . '%')
             ->get();
 
         foreach ($result as $data) {

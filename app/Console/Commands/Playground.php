@@ -47,6 +47,8 @@ class Playground extends Command
 
         // CategoryProduct::factory()->create();
 
+        // User::factory()->create();
+
         $this->info('Tudo certo!');
     }
 }

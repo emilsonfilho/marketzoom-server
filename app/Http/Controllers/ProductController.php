@@ -20,11 +20,10 @@ class ProductController extends Controller
      *
      * Display a listing of the available products.
      */
-    public function index(string $search = '')
+    public function index()
     {
         $result = Product::with(['user', 'shop', 'comments', 'comments.user'])
             ->where('stock_quantity', '<>', 0)
-            ->where('name', 'like', '=', '%' . $search . '%')
             ->get();
 
         foreach ($result as $data) {
@@ -110,5 +109,14 @@ class ProductController extends Controller
     {
         $item['total_ratings'] = $item->comments->count('rating');
         $item['average_rating'] = $item['total_ratings'] > 0 ? $item->comments->sum('rating') / $item['total_ratings'] : 0;
+    }
+
+    public function search(string $search = '')
+    {
+        if (!$search) return response()->json(null, Response::HTTP_NO_CONTENT);
+
+        $result = Product::with(['user', 'shop', 'comments', 'comments.user'])->where('name', 'like', "%{$search}%")->get();
+
+        return response()->json(ProductResource::collection($result));
     }
 }

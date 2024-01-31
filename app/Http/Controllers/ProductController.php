@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Knuckles\Scribe\Attributes\Group;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,13 +23,16 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $result = Product::with(['user', 'shop', 'comments', 'comments.user'])
+        $result = Product::select(
+            'products.*',
+            DB::raw('COUNT(comments.id) as total_ratings'),
+            DB::raw('COALESCE(AVG(comments.rating), 0) as average_rating')
+        )
+            ->with(['user', 'shop', 'comments', 'comments.user'])
+            ->leftJoin('comments', 'comments.product_id', '=', 'products.id')
             ->where('stock_quantity', '<>', 0)
+            ->groupBy('products.id')
             ->get();
-
-        foreach ($result as $data) {
-            $this->setRatings($data);
-        }
 
         return response()->json(ProductResource::collection($result));
     }

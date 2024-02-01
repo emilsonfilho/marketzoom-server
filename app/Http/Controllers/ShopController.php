@@ -111,10 +111,12 @@ class ShopController extends Controller
     }
 
     /**
+     * DELETE api/shops/{shop}
+     *
      * Remove the specified resource from storage.
      */
     public function destroy(Shop $shop)
     {
-        //
+
     }
 }

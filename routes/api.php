@@ -44,6 +44,8 @@ Route::prefix('categories')->group(function () {
 
 Route::prefix('shops')->group(function () {
     Route::put('/{shop}/change-image', [ShopController::class, 'changeShopImage']);
+    Route::put('/{shop}/enable', [ShopController::class, 'enable']);
+    Route::put('/{shop}/disable', [ShopController::class, 'disable']);
 });
 
 Route::apiResource('/users', UserController::class);

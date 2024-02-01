@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreShopRequest;
+use App\Http\Requests\UpdateShopImageRequest;
 use App\Http\Requests\UpdateShopRequest;
 use App\Http\Resources\ShopResource;
 use App\Models\Shop;
+use Illuminate\Support\Facades\Storage;
 use Knuckles\Scribe\Attributes\Group;
 
 #[Group(name: 'Lojas', description: 'Gestão de lojinhas')]
@@ -29,6 +31,11 @@ class ShopController extends Controller
     public function store(StoreShopRequest $request)
     {
         $data = $request->validated();
+
+        if (isset($data['profile'])) {
+            $data['profile'] = Storage::disk('public')->put('shops', $data['profile']);
+        }
+
         $data['admin_id'] = auth()->user()->id;
 
         $result = Shop::create($data);
@@ -56,6 +63,24 @@ class ShopController extends Controller
         $shop->update($request->validated());
 
         return response()->json(new ShopResource($shop));
+    }
+
+    /**
+     * PUT api/shops/{shop}/change-image
+     *
+     * Change the image of the shop
+     */
+    public function changeShopImage(UpdateShopImageRequest $request, Shop $shop)
+    {
+        $data = $request->validated();
+
+        if (isset($shop->profile)) Storage::disk('public')->delete($shop->profile);
+
+        $data['profile'] = Storage::disk('public')->put('shops', $data['profile']);
+
+        $shop->update($data);
+
+        return response()->json(new ShopResource($shop->load('admin')));
     }
 
     /**

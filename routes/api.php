@@ -42,6 +42,10 @@ Route::prefix('categories')->group(function () {
     Route::get('/available', [CategoryController::class, 'available']);
 });
 
+Route::prefix('shops')->group(function () {
+    Route::put('/{shop}/change-image', [ShopController::class, 'changeShopImage']);
+});
+
 Route::apiResource('/users', UserController::class);
 Route::apiResource('/products', ProductController::class);
 Route::apiResource('/comments', CommentController::class);

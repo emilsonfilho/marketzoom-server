@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProductController;
@@ -55,5 +56,6 @@ Route::apiResource('/comments', CommentController::class);
 Route::apiResource('/user_types', UserTypeController::class);
 Route::apiResource('/categories', CategoryController::class);
 Route::apiResource('/shops', ShopController::class);
+Route::apiResource('/banners', BannerController::class);
 
 

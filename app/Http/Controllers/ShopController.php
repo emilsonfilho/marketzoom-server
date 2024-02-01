@@ -84,6 +84,33 @@ class ShopController extends Controller
     }
 
     /**
+     * PUT api/shops/{shop}/enable
+     *
+     * Enable a shop
+     */
+    public function enable(Shop $shop)
+    {
+        $shop->update([
+            'active' => true,
+        ]);
+
+        return response()->json(new ShopResource($shop->load('admin')));
+    }
+
+    /**
+     * PUT api/shops/{shop}/disable
+     *
+     * Disable a shop
+     */
+    public function disable(Shop $shop) {
+        $shop->update([
+            'active' => false,
+        ]);
+
+        return response()->json(new ShopResource($shop->load('admin')));
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Shop $shop)

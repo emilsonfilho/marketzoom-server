@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserTypeController;
 use Illuminate\Http\Request;
@@ -46,5 +47,6 @@ Route::apiResource('/products', ProductController::class);
 Route::apiResource('/comments', CommentController::class);
 Route::apiResource('/user_types', UserTypeController::class);
 Route::apiResource('/categories', CategoryController::class);
+Route::apiResource('/shops', ShopController::class);
 
 

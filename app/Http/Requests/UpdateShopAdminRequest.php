@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateShopRequest extends FormRequest
+class UpdateShopAdminRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,19 +22,16 @@ class UpdateShopRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string'],
-            'slogan' => ['required', 'string', 'max:255'],
+            'new_admin_id' => ['required', 'integer', 'exists:users,id'],
         ];
     }
 
     public function messages()
     {
         return [
-            'name.required' => 'O campo de nome é obrigatório.',
-            'name.string' => 'O campo de nome deve ser uma string.',
-            'slogan.required' => 'O campo de slogan é obrigatório.',
-            'slogan.string' => 'O campo de slogan deve ser uma string.',
-            'slogan.max' => 'O campo de slogan não deve ultrapassar os 255 caracteres.',
+            'new_admin_id.required' => 'O novo administrador da loja é obrigatório.',
+            'new_admin_id.integer' => 'O novo administrador da loja deve ser um número.',
+            'new_admin_id.exists' => 'O novo administrador da loja não foi encontrado.',
         ];
     }
 }

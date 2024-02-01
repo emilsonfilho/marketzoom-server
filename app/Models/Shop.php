@@ -25,6 +25,10 @@ class Shop extends Model
         'active',
     ];
 
+    protected $attributes = [
+        'active' => true,
+    ];
+
     /**
      * Get all of the users for the Shop
      *

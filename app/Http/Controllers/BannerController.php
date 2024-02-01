@@ -45,6 +45,7 @@ class BannerController extends Controller
      */
     public function destroy(Banner $banner)
     {
+        Storage::disk('public')->delete($banner->image);
         $banner->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);

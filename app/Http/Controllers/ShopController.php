@@ -37,11 +37,13 @@ class ShopController extends Controller
     }
 
     /**
+     * GET api/shops/{shop}
+     *
      * Display the specified resource.
      */
     public function show(Shop $shop)
     {
-        //
+        return response()->json(new ShopResource($shop));
     }
 
     /**

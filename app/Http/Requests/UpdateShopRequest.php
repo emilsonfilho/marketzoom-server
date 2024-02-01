@@ -34,6 +34,7 @@ class UpdateShopRequest extends FormRequest
             'name.string' => 'O campo de nome deve ser uma string.',
             'slogan.required' => 'O campo de slogan é obrigatório.',
             'slogan.string' => 'O campo de slogan deve ser uma string.',
+            'slogan.max' => 'O campo de slogan não deve ultrapassar os 255 caracteres.',
         ];
     }
 }

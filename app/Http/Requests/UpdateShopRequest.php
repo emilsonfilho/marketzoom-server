@@ -11,7 +11,7 @@ class UpdateShopRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,20 @@ class UpdateShopRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['required', 'string'],
+            'slogan' => ['required', 'string', 'max:255'],
+            'profile' => ['nullable', 'file'],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'O campo de nome é obrigatório.',
+            'name.string' => 'O campo de nome deve ser uma string.',
+            'slogan.required' => 'O campo de slogan é obrigatório.',
+            'slogan.string' => 'O campo de slogan deve ser uma string.',
+            'profile.file' => 'O campo de perfil deve ser um arquivo de imagem.',
         ];
     }
 }

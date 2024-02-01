@@ -47,19 +47,15 @@ class ShopController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Shop $shop)
-    {
-        //
-    }
-
-    /**
+     * PUT api/shops/{shop}
+     *
      * Update the specified resource in storage.
      */
     public function update(UpdateShopRequest $request, Shop $shop)
     {
-        //
+        $shop->update($request->validated());
+
+        return response()->json(new ShopResource($shop));
     }
 
     /**

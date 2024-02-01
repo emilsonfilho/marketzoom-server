@@ -4,24 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreShopRequest;
 use App\Http\Requests\UpdateShopRequest;
+use App\Http\Resources\ShopResource;
 use App\Models\Shop;
+use Knuckles\Scribe\Attributes\Group;
 
+#[Group(name: 'Lojas', description: 'Gestão de lojinhas')]
 class ShopController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * GET api/shops
+     *
+     * Display a listing of the shops.
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return response()->json(ShopResource::collection(Shop::where('active', true)->get()));
     }
 
     /**

@@ -22,11 +22,18 @@ class ShopController extends Controller
     }
 
     /**
+     * POST api/shops
+     *
      * Store a newly created resource in storage.
      */
     public function store(StoreShopRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['admin_id'] = auth()->user()->id;
+
+        $result = Shop::create($data);
+
+        return response()->json(new ShopResource($result->load('admin')));
     }
 
     /**

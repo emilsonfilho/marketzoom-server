@@ -34,7 +34,10 @@ class ShopFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Shop $shop) {
-            $shop->admin()->update(['shop_id' => $shop->id]);
+            $shop->admin()->update([
+                'shop_id' => $shop->id,
+                'user_type_id' => 2,
+            ]);
         });
     }
 }

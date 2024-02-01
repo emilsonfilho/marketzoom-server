@@ -23,7 +23,7 @@ class ShopPolicy
     /**
      * Determine whether the user can store a shop
      */
-    public function store(User $user): bool
+    public function create(User $user): bool
     {
         return $user->user_type_id === 2;
     }

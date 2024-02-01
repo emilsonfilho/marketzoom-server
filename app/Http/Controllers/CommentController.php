@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 class CommentController extends Controller
 {
     /**
+     * POST api/comments
+     *
      * Store a newly created comment in storage.
      */
     public function store(StoreCommentRequest $request): JsonResponse
@@ -24,6 +26,8 @@ class CommentController extends Controller
     }
 
     /**
+     * GET api/comments/{comment}
+     *
      * Display the specified comment.
      */
     public function show(Comment $comment): JsonResponse
@@ -32,6 +36,8 @@ class CommentController extends Controller
     }
 
     /**
+     * PUT api/commnts/{comment}
+     *
      * Update the specified comment in storage.
      */
     public function update(UpdateCommentRequest $request, Comment $comment): JsonResponse
@@ -42,6 +48,8 @@ class CommentController extends Controller
     }
 
     /**
+     * DELETE api/comments/{comment}
+     *
      * Remove the specified comment from storage.
      */
     public function destroy(Comment $comment): JsonResponse

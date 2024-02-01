@@ -8,6 +8,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserTypeController;
+use App\Models\Banner;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,40 +24,41 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
-    return $request->user();
+/** SANCTUM MIDDLEWARE */
+Route::middleware('auth:sanctum')->group(function () {
+    Route::put('users/{user}/salesperson', [UserController::class, 'makingSalesperson']);
+    Route::put('products/{product}/change-image', [ProductController::class, 'updateProductImage']);
+
+    Route::prefix('shops')->group(function () {
+        Route::put('/{shop}/change-image', [ShopController::class, 'changeShopImage']);
+        Route::put('/{shop}/change-admin', [ShopController::class, 'updateAdmin']);
+        Route::put('/{shop}/enable', [ShopController::class, 'enable']);
+        Route::put('/{shop}/disable', [ShopController::class, 'disable']);
+    });
+
+    Route::apiResource('/users', UserController::class)->only(['store', 'show', 'update', 'destroy']);
+    Route::apiResource('/products', ProductController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('/comments', CommentController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('/categories', CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::apiResource('/shops', ShopController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('/banners', BannerController::class)->only(['store', 'destroy']);
+    Route::apiResource('/user_types', UserTypeController::class);
 });
 
+// ---------------------------------------------------------------------------------
+
+/** PERMITIDAS PARA TODOS OS USERS */
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'store']);
 });
-Route::prefix('users')->group(function () {
-    Route::put('/{user}/salesperson', [UserController::class, 'makingSalesperson']);
-    Route::put('/{user}/reset-password', [UserController::class, 'resetPassword']);
-});
 
-Route::prefix('products')->group(function () {
-    Route::get('/search/{search?}', [ProductController::class, 'search']);
-    Route::put('/{product}/change-image', [ProductController::class, 'updateProductImage']);
-});
+Route::put('/users/{user}/reset-password', [UserController::class, 'resetPassword']);
+Route::get('/products/search/{search?}', [ProductController::class, 'search']);
+Route::get('/categories/available', [CategoryController::class, 'available']);
 
-Route::prefix('categories')->group(function () {
-    Route::get('/available', [CategoryController::class, 'available']);
-});
-
-Route::prefix('shops')->group(function () {
-    Route::put('/{shop}/change-image', [ShopController::class, 'changeShopImage']);
-    Route::put('/{shop}/enable', [ShopController::class, 'enable']);
-    Route::put('/{shop}/disable', [ShopController::class, 'disable']);
-    Route::put('/{shop}/change-admin', [ShopController::class, 'updateAdmin']);
-});
-
-Route::apiResource('/users', UserController::class);
-Route::apiResource('/products', ProductController::class);
-Route::apiResource('/comments', CommentController::class);
-Route::apiResource('/user_types', UserTypeController::class);
-Route::apiResource('/categories', CategoryController::class);
-Route::apiResource('/shops', ShopController::class);
-Route::apiResource('/banners', BannerController::class);
-
-
+Route::apiResource('/users', UserController::class)->only(['show']);
+Route::apiResource('/comments', CommentController::class)->only(['show']);
+Route::apiResource('/products', ProductController::class)->only(['index', 'show']);
+Route::apiResource('/categories', CategoryController::class)->only(['show']);
+Route::apiResource('/shops', ShopController::class)->only(['index', 'show']);
+Route::apiResource('/banners', BannerController::class)->only(['index']);

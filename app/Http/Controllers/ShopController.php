@@ -7,8 +7,10 @@ use App\Http\Requests\UpdateShopImageRequest;
 use App\Http\Requests\UpdateShopRequest;
 use App\Http\Resources\ShopResource;
 use App\Models\Shop;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Knuckles\Scribe\Attributes\Group;
+use Symfony\Component\HttpFoundation\Response;
 
 #[Group(name: 'Lojas', description: 'Gestão de lojinhas')]
 class ShopController extends Controller
@@ -117,6 +119,11 @@ class ShopController extends Controller
      */
     public function destroy(Shop $shop)
     {
+        $shop->admin()->update(['shop_id' => null]);
+        User::where('shop_id', $shop->id)->update(['shop_id' => null]);
 
+        $shop->delete();
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }

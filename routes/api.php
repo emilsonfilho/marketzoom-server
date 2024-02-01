@@ -46,6 +46,7 @@ Route::prefix('shops')->group(function () {
     Route::put('/{shop}/change-image', [ShopController::class, 'changeShopImage']);
     Route::put('/{shop}/enable', [ShopController::class, 'enable']);
     Route::put('/{shop}/disable', [ShopController::class, 'disable']);
+    Route::put('/{shop}/change-admin', [ShopController::class, 'updateAdmin']);
 });
 
 Route::apiResource('/users', UserController::class);

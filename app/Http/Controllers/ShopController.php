@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreShopRequest;
+use App\Http\Requests\UpdateShopAdminRequest;
 use App\Http\Requests\UpdateShopImageRequest;
 use App\Http\Requests\UpdateShopRequest;
 use App\Http\Resources\ShopResource;
@@ -83,6 +84,24 @@ class ShopController extends Controller
         $shop->update($data);
 
         return response()->json(new ShopResource($shop->load('admin')));
+    }
+
+    /**
+     * PUT api/shops/{shop}/update-admin
+     *
+     * Updates de administrator of the shop
+     */
+    public function updateAdmin(UpdateShopAdminRequest $request, Shop $shop)
+    {
+        $new_admin_id = $request->validated('new_admin_id');
+
+        if (User::where('id', $new_admin_id)->first()->shop_id === $shop->id) {
+            $shop->update(['admin_id' => $new_admin_id]);
+        } else {
+            return response()->json(['messages' => ['new_admin_id' => ['O novo administrador da loja não pertence à mesma.']]]);
+        }
+
+        return response()->json(new ShopResource($shop));
     }
 
     /**

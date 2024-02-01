@@ -77,7 +77,7 @@ class ShopController extends Controller
     {
         $data = $request->validated();
 
-        if (isset($shop->profile)) Storage::disk('public')->delete($shop->profile);
+        isset($shop->profile) ? Storage::disk('public')->delete($shop->profile) : null;
 
         $data['profile'] = Storage::disk('public')->put('shops', $data['profile']);
 

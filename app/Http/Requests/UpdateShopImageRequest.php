@@ -30,7 +30,7 @@ class UpdateShopImageRequest extends FormRequest
     {
         return [
             'profile.required' => 'O campo de perfil é obrigatório.',
-            'profile.file' => 'O campo de foto deve ser um arquivo de perfil.',
+            'profile.file' => 'O campo de foto deve ser um arquivo de imagem.',
         ];
     }
 }

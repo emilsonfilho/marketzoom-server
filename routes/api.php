@@ -6,12 +6,10 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserTypeController;
-use App\Models\Banner;
-use App\Models\Comment;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,7 +26,6 @@ use Illuminate\Support\Facades\Route;
 /** SANCTUM MIDDLEWARE */
 Route::middleware('auth:sanctum')->group(function () {
     Route::put('users/{user}/salesperson', [UserController::class, 'makingSalesperson']);
-    Route::put('products/{product}/change-image', [ProductController::class, 'updateProductImage']);
 
     Route::prefix('shops')->group(function () {
         Route::put('/{shop}/change-image', [ShopController::class, 'changeShopImage']);
@@ -50,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/categories', CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::apiResource('/shops', ShopController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('/banners', BannerController::class)->only(['store', 'destroy']);
+    Route::apiResource('/product-images', ProductImageController::class)->only(['store', 'udpate', 'destroy']);
     Route::apiResource('/user_types', UserTypeController::class);
 
     Route::post('/auth/logout', [AuthController::class, 'logout']);
@@ -72,3 +70,4 @@ Route::apiResource('/products', ProductController::class)->only(['index', 'show'
 Route::apiResource('/categories', CategoryController::class)->only(['show']);
 Route::apiResource('/shops', ShopController::class)->only(['index', 'show']);
 Route::apiResource('/banners', BannerController::class)->only(['index']);
+Route::apiResource('/product-images', ProductImageController::class)->only(['show']);

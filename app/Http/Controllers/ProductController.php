@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\NotAllowedException;
 use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductImageRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
-use App\Models\Comment;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -31,7 +30,7 @@ class ProductController extends Controller
             DB::raw('COUNT(comments.id) as total_ratings'),
             DB::raw('COALESCE(AVG(comments.rating), 0) as average_rating')
         )
-            ->with(['user', 'shop', 'comments', 'comments.user'])
+            ->with(['user', 'shop', 'comments', 'comments.user', 'images'])
             ->leftJoin('comments', 'comments.product_id', '=', 'products.id')
             ->where('stock_quantity', '<>', 0)
             ->groupBy('products.id')
@@ -51,13 +50,20 @@ class ProductController extends Controller
 
         $data = $request->validated();
 
-        $data['image'] = Storage::disk('public')->put('products', $data['image']);
         $data['user_id'] = auth()->id();
         $data['shop_id'] = User::findOrFail($data['user_id'])->shop_id;
 
+        $image = Storage::disk('public')->put('products', $data['image']);
+
+        unset($data['image']);
         $result = Product::create($data);
 
-        return response()->json(new ProductResource($result->load(['user', 'shop', 'comments', 'comments.user'])));
+        ProductImage::create([
+            'image' => $image,
+            'product_id' => $result->id,
+        ]);
+
+        return response()->json(new ProductResource($result->load(['user', 'shop', 'comments', 'comments.user', 'images'])));
     }
 
     /**
@@ -68,7 +74,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $this->setRatings($product);
-        return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user'])));
+        return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user', 'images'])));
     }
 
     /**
@@ -83,28 +89,7 @@ class ProductController extends Controller
         $product->update($request->validated());
         $this->setRatings($product);
 
-        return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user'])));
-    }
-
-    /**
-     * PUT api/products/{product}/change-image
-     *
-     * Update the image of the product
-     */
-    public function updateProductImage(UpdateProductImageRequest $request, Product $product)
-    {
-        if (Gate::denies('update-product')) return NotAllowedException::notAllowed();
-
-        $data = $request->validated();
-
-        Storage::disk('public')->delete($product->image);
-
-        $data['image'] = Storage::disk('public')->put('products', $data['image']);
-
-        $product->update($data);
-        $this->setRatings($product);
-
-        return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user'])));
+        return response()->json(new ProductResource($product->load(['user', 'shop', 'comments', 'comments.user', 'images'])));
     }
 
     /**
@@ -116,6 +101,9 @@ class ProductController extends Controller
     {
         if (Gate::denies('delete-product', $product)) return NotAllowedException::notAllowed();
 
+        Storage::disk('public')->delete($product->images()->pluck('image')->toArray());
+
+        $product->images()->delete();
         $product->comments()->forceDelete();
         $product->delete();
 
@@ -126,7 +114,7 @@ class ProductController extends Controller
     {
         if (!$search) return response()->json(null, Response::HTTP_NO_CONTENT);
 
-        $result = Product::with(['user', 'shop', 'comments', 'comments.user'])->where('name', 'like', "%{$search}%")->get();
+        $result = Product::with(['user', 'shop', 'comments', 'comments.user', 'images'])->where('name', 'like', "%{$search}%")->get();
 
         return response()->json(ProductResource::collection($result));
     }

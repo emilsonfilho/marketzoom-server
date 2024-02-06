@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateProductImageRequest extends FormRequest
+class StoreProductImageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,15 +23,15 @@ class UpdateProductImageRequest extends FormRequest
     {
         return [
             'image' => ['required', 'file'],
-            'product_id' => ['required', 'integer', 'exists:products,id']
+            'product_id' => ['required', 'integer', 'exists:products,id'],
         ];
     }
 
     public function messages()
     {
         return [
-            'image.required' => 'A nova foto do produto é obrigatória.',
-            'image.file' => 'A nova foto do produto deve ser uma imagem.',
+            'image.required' => 'O campo de imagem é obrigatório.',
+            'image.file' => 'O campo de imagem deve ser uma imagem.',
             'product_id.required' => 'O campo de ID do produto é obrigatório.',
             'product_id.integer' => 'O campo de ID do produto deve ser um número.',
             'product_id.exists' => 'O campo de ID do produto deve corresponder à algum produto.',

@@ -10,10 +10,6 @@ use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserTypeController;
-use App\Models\Banner;
-use App\Models\Comment;
-use App\Models\ProductImage;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*

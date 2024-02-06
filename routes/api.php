@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProductController;
@@ -34,6 +35,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{shop}/change-admin', [ShopController::class, 'updateAdmin']);
         Route::put('/{shop}/enable', [ShopController::class, 'enable']);
         Route::put('/{shop}/disable', [ShopController::class, 'disable']);
+    });
+
+    Route::prefix('cart')->group(function () {
+        Route::get('/', [CartController::class, 'index']);
+        Route::post('/add-item/{product}', [CartController::class, 'addItem']);
+        Route::delete('/remove-item/{product}', [CartController::class, 'removeItem']);
+        Route::delete('/remove-product/{product}', [CartController::class, 'removeProduct']);
     });
 
     Route::apiResource('/users', UserController::class)->only(['store', 'show', 'update', 'destroy']);

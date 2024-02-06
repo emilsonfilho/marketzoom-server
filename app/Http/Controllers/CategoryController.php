@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NotAllowedException;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Models\CategoryProduct;
+use Illuminate\Support\Facades\Gate;
 use Knuckles\Scribe\Attributes\Group;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,6 +43,8 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
+        if (Gate::denies('create-category')) return NotAllowedException::notAllowed();
+
         $result = Category::create($request->validated());
 
         return response()->json(new CategoryResource($result));
@@ -64,6 +68,8 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
+        if (Gate::denies('update-category')) return NotAllowedException::notAllowed();
+
         $category->update($request->validated());
 
         return response()->json(new CategoryResource($category));
@@ -76,6 +82,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        if (Gate::denies('delete-category')) return NotAllowedException::notAllowed();
+
         CategoryProduct::where('category_id', $category->id)->delete();
         $category->delete();
 

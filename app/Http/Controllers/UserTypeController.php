@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NotAllowedException;
 use App\Http\Resources\UserTypeResource;
 use App\Models\UserType;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 use Knuckles\Scribe\Attributes\Group;
 
 #[Group(name: 'Tipos de Usuário', description: 'Gestão dos tipos de usuários')]
@@ -17,6 +19,8 @@ class UserTypeController extends Controller
      */
     public function index(): JsonResponse
     {
+        if (Gate::denies('is-admin')) return NotAllowedException::notAllowed();
+
         return response()->json(UserTypeResource::collection(UserType::all()));
     }
 
@@ -27,6 +31,8 @@ class UserTypeController extends Controller
      */
     public function show(UserType $userType): JsonResponse
     {
+        if (Gate::denies('is-admin')) return NotAllowedException::notAllowed();
+
         return response()->json(new UserTypeResource($userType));
     }
 }

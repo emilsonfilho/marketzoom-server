@@ -2,65 +2,133 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCartRequest;
-use App\Http\Requests\UpdateCartRequest;
+use App\Exceptions\NotAllowedException;
+use App\Http\Requests\AddItemRequest;
+use App\Http\Requests\RemoveItemRequest;
+use App\Http\Resources\CartResource;
 use App\Models\Cart;
+use App\Models\Product;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Gate;
+use Knuckles\Scribe\Attributes\Group;
 
+#[Group(name: 'Carrinhos', description: 'Gestão dos carrinhos')]
 class CartController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * GET api/cart
+     *
+     * Display the cart of the logged user.
      */
     public function index()
     {
-        //
+        if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
+
+        return response()->json($this->getUserCart());
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
+     * POST api/cart/add-item/{product}
+     *
      * Store a newly created resource in storage.
      */
-    public function store(StoreCartRequest $request)
+    public function addItem(AddItemRequest $request, Product $product)
     {
-        //
+        if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
+
+        $data = $request->validated();
+        $data['user_id'] = auth()->id();
+        $data['product_id'] = $product->id;
+
+        $cart = Cart::where('product_id', $product->id);
+        $current_product_stock = $product->stock_quantity;
+        $quantity_ordered = $data['product_quantity'];
+
+        if ($current_product_stock < $quantity_ordered)
+            return response()->json(['error' => 'Você não pode pedir a mais do que tem no estoque!']);
+
+        $product->update([
+            'stock_quantity' => $current_product_stock - $quantity_ordered,
+        ]);
+
+        if ($cart->exists()) {
+            $cart->update([
+                'product_quantity' => $cart->first()->product_quantity + $quantity_ordered,
+            ]);
+        } else {
+            $cart = Cart::create($data);
+        }
+
+        return response()->json($this->getUserCart());
     }
 
     /**
-     * Display the specified resource.
+     * DELETE api/cart/remove-item/{product}
+     *
+     * Remove an item from the cart
      */
-    public function show(Cart $cart)
+    public function removeItem(RemoveItemRequest $request, Product $product)
     {
-        //
+        if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
+
+        $data = $request->validated();
+
+        $product_cart = $this->getCartField($product->id);
+        $quantity_ordered = $product_cart->product_quantity;
+        $current_product_stock = $product->stock_quantity;
+        $quantity_to_exclude = $data['product_quantity'];
+
+        if ($quantity_to_exclude > $quantity_ordered) {
+            return response()->json([
+                'error' => 'Você não pode excluir um número acima do que pediu.'
+            ]);
+        } else if ($quantity_to_exclude == $quantity_ordered) {
+            $product->update([
+                'stock_quantity' => $current_product_stock + $quantity_ordered,
+            ]);
+
+            $product_cart->delete();
+        } else {
+            $product_cart->update([
+                'product_quantity' => $quantity_ordered - $quantity_to_exclude,
+            ]);
+
+            $product->update([
+                'stock_quantity' => $current_product_stock + $quantity_to_exclude,
+            ]);
+        }
+
+        return response()->json($this->getUserCart());
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * DELETE api/cart/remove-product/{product}
+     *
+     * Removes the entirely product from the cart
      */
-    public function edit(Cart $cart)
+    public function removeProduct(Product $product)
     {
-        //
+        if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
+
+        $cart = $this->getCartField($product->id);
+
+        $returned_quantity = $cart->product_quantity;
+
+        $product->update([
+            'stock_quantity' => $product->stock_quantity + $returned_quantity,
+        ]);
+
+        $cart->delete();
+
+        return response()->json($this->getUserCart());
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCartRequest $request, Cart $cart)
+    private function getUserCart(): ResourceCollection
     {
-        //
+        return CartResource::collection(Cart::with('product')->where('user_id', auth()->id())->groupBy('user_id', 'carts.id')->get());
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Cart $cart)
-    {
-        //
+    private function getCartField(int $product_id) {
+        return Cart::where('user_id', auth()->id())->where('product_id', $product_id)->first();
     }
 }

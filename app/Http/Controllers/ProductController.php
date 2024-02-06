@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NotAllowedException;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductImageRequest;
 use App\Http\Requests\UpdateProductRequest;
@@ -10,6 +11,7 @@ use App\Models\Comment;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Knuckles\Scribe\Attributes\Group;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,9 +47,12 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
+        if (Gate::denies('create-product')) return NotAllowedException::notAllowed();
+
         $data = $request->validated();
 
         $data['image'] = Storage::disk('public')->put('products', $data['image']);
+        $data['user_id'] = auth()->id();
         $data['shop_id'] = User::findOrFail($data['user_id'])->shop_id;
 
         $result = Product::create($data);
@@ -73,6 +78,8 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
+        if (Gate::denies('update-product')) return NotAllowedException::notAllowed();
+
         $product->update($request->validated());
         $this->setRatings($product);
 
@@ -86,6 +93,8 @@ class ProductController extends Controller
      */
     public function updateProductImage(UpdateProductImageRequest $request, Product $product)
     {
+        if (Gate::denies('update-product')) return NotAllowedException::notAllowed();
+
         $data = $request->validated();
 
         Storage::disk('public')->delete($product->image);
@@ -105,16 +114,12 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        if (Gate::denies('delete-product', $product)) return NotAllowedException::notAllowed();
+
         $product->comments()->forceDelete();
         $product->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
-    }
-
-    private function setRatings($item)
-    {
-        $item['total_ratings'] = $item->comments->count('rating');
-        $item['average_rating'] = $item['total_ratings'] > 0 ? $item->comments->sum('rating') / $item['total_ratings'] : 0;
     }
 
     public function search(string $search = '')
@@ -124,5 +129,11 @@ class ProductController extends Controller
         $result = Product::with(['user', 'shop', 'comments', 'comments.user'])->where('name', 'like', "%{$search}%")->get();
 
         return response()->json(ProductResource::collection($result));
+    }
+
+    private function setRatings($item)
+    {
+        $item['total_ratings'] = $item->comments->count('rating');
+        $item['average_rating'] = $item['total_ratings'] > 0 ? $item->comments->sum('rating') / $item['total_ratings'] : 0;
     }
 }

@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NotAllowedException;
-use App\Http\Requests\AddItemRequest;
-use App\Http\Requests\RemoveItemRequest;
+use App\Http\Requests\ItemRequest;
 use App\Http\Resources\CartResource;
 use App\Models\Cart;
 use App\Models\Product;
@@ -32,7 +31,7 @@ class CartController extends Controller
      *
      * Store a newly created resource in storage.
      */
-    public function addItem(AddItemRequest $request, Product $product)
+    public function addItem(ItemRequest $request, Product $product)
     {
         if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
 
@@ -67,7 +66,7 @@ class CartController extends Controller
      *
      * Remove an item from the cart
      */
-    public function removeItem(RemoveItemRequest $request, Product $product)
+    public function removeItem(ItemRequest $request, Product $product)
     {
         if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
 

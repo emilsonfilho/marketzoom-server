@@ -51,6 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/shops', ShopController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('/banners', BannerController::class)->only(['store', 'destroy']);
     Route::apiResource('/user_types', UserTypeController::class);
+
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
 });
 
 // ---------------------------------------------------------------------------------

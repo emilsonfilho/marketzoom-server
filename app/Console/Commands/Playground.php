@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\CategoryProduct;
 use App\Models\Comment as ModelsComment;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\Shop;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -50,7 +51,9 @@ class Playground extends Command
         // User::factory()->create();
 
         // Product::factory(10)->create();
-        
+
+        // ProductImage::factory()->create();
+
         $this->info('Tudo certo!');
     }
 }

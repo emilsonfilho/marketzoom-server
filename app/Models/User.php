@@ -25,6 +25,7 @@ class User extends Authenticatable
         'user_type_id',
         'shop_id',
         'name',
+        'username',
         'email',
         'password',
         'profile',

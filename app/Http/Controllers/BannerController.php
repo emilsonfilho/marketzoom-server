@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NotAllowedException;
 use App\Http\Requests\StoreBannerRequest;
 use App\Http\Resources\BannerResource;
 use App\Models\Banner;
+use Illuminate\Support\Facades\Gate as FacadesGate;
 use Illuminate\Support\Facades\Storage;
 use Knuckles\Scribe\Attributes\Group;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,6 +31,8 @@ class BannerController extends Controller
      */
     public function store(StoreBannerRequest $request)
     {
+        if (FacadesGate::denies('create-banner')) return NotAllowedException::notAllowed();
+
         $data = $request->validated();
 
         $data['image'] = Storage::disk('public')->put('banners', $data['image']);
@@ -45,6 +49,8 @@ class BannerController extends Controller
      */
     public function destroy(Banner $banner)
     {
+        if (FacadesGate::denies('delete-banner')) return NotAllowedException::notAllowed();
+
         Storage::disk('public')->delete($banner->image);
         $banner->delete();
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NotAllowedException;
 use App\Http\Requests\StoreShopRequest;
 use App\Http\Requests\UpdateShopAdminRequest;
 use App\Http\Requests\UpdateShopImageRequest;
@@ -9,6 +10,7 @@ use App\Http\Requests\UpdateShopRequest;
 use App\Http\Resources\ShopResource;
 use App\Models\Shop;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Knuckles\Scribe\Attributes\Group;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,6 +35,8 @@ class ShopController extends Controller
      */
     public function store(StoreShopRequest $request)
     {
+        if (Gate::denies('create-shop')) return NotAllowedException::notAllowed();
+
         $data = $request->validated();
 
         if (isset($data['profile'])) {
@@ -63,6 +67,8 @@ class ShopController extends Controller
      */
     public function update(UpdateShopRequest $request, Shop $shop)
     {
+        if (Gate::denies('update-shop')) return NotAllowedException::notAllowed();
+
         $shop->update($request->validated());
 
         return response()->json(new ShopResource($shop));
@@ -75,6 +81,8 @@ class ShopController extends Controller
      */
     public function changeShopImage(UpdateShopImageRequest $request, Shop $shop)
     {
+        if (Gate::denies('update-shop')) return NotAllowedException::notAllowed();
+
         $data = $request->validated();
 
         isset($shop->profile) ? Storage::disk('public')->delete($shop->profile) : null;
@@ -93,6 +101,8 @@ class ShopController extends Controller
      */
     public function updateAdmin(UpdateShopAdminRequest $request, Shop $shop)
     {
+        if (Gate::denies('update-shop')) return NotAllowedException::notAllowed();
+
         $new_admin_id = $request->validated('new_admin_id');
 
         if (User::where('id', $new_admin_id)->first()->shop_id === $shop->id) {
@@ -111,6 +121,8 @@ class ShopController extends Controller
      */
     public function enable(Shop $shop)
     {
+        if (Gate::denies('update-shop')) return NotAllowedException::notAllowed();
+
         $shop->update([
             'active' => true,
         ]);
@@ -124,6 +136,8 @@ class ShopController extends Controller
      * Disable a shop
      */
     public function disable(Shop $shop) {
+        if (Gate::denies('update-shop')) return NotAllowedException::notAllowed();
+
         $shop->update([
             'active' => false,
         ]);
@@ -138,6 +152,8 @@ class ShopController extends Controller
      */
     public function destroy(Shop $shop)
     {
+        if (Gate::denies('delete-shop')) return NotAllowedException::notAllowed();
+
         $shop->admin()->update(['shop_id' => null]);
         User::where('shop_id', $shop->id)->update(['shop_id' => null]);
 

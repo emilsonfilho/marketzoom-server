@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NotAllowedException;
 use App\Http\Requests\DestroyUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserPasswordRequest;
@@ -9,6 +10,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 use Knuckles\Scribe\Attributes\Group;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -44,6 +46,8 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
+        if (Gate::denies('udpate-user')) return NotAllowedException::notAllowed();
+
         $user->update($request->validated());
 
         return response()->json(new UserResource($user->load(['userType', 'shop', 'shop.admin'])));
@@ -54,6 +58,8 @@ class UserController extends Controller
      */
     public function resetPassword(UpdateUserPasswordRequest $request, User $user): JsonResponse
     {
+        if (Gate::denies('update-user')) return NotAllowedException::notAllowed();
+
         $request->validated();
 
         $user->update([
@@ -70,6 +76,8 @@ class UserController extends Controller
      */
     public function destroy(DestroyUserRequest $request, User $user): JsonResponse
     {
+        if (Gate::denies('delete-account')) return NotAllowedException::notAllowed();
+
         $next_admin = User::with('shop')->findOrFail($request->validated('next_admin_shop_id'));
 
         if ($user->has('administredShop')) {
@@ -94,6 +102,8 @@ class UserController extends Controller
      */
     public function makingSalesperson(User $user): JsonResponse
     {
+        if (Gate::denies('makes-salesperson')) return NotAllowedException::notAllowed();
+
         $user->update([
             'user_type_id' => 2
         ]);

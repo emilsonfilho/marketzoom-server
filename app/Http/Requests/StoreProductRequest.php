@@ -27,7 +27,6 @@ class StoreProductRequest extends FormRequest
             'stock_quantity' => ['required', 'integer', 'gt:0'],
             'details' => ['required', 'string'],
             'image' => ['required', 'file'],
-            'user_id' => ['required', 'integer', 'exists:users,id'],
         ];
     }
 
@@ -45,9 +44,6 @@ class StoreProductRequest extends FormRequest
             'details.string' => 'A descrição do produto deve ser uma string.',
             'image.required' => 'A foto do produto é obrigatória.',
             'image.file' => 'A foto do produto deve ser uma imagem.',
-            'user_id.required' => 'O ID do dono do produto é obrigatório.',
-            'user_id.integer' => 'O ID do dono do produto deve ser um número.',
-            'user_id.exists' => 'O dono do produto não existe.',
         ];
     }
 }

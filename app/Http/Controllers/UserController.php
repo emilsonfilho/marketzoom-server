@@ -11,6 +11,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Knuckles\Scribe\Attributes\Group;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,7 +25,11 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $result = User::create($request->validated());
+        $data = $request->validated();
+
+        Storage::disk('public')->put('users', $data['profile'] ?? '');
+
+        $result = User::create($data);
 
         return response()->json(new UserResource($result->load('userType')));
     }
@@ -48,7 +53,12 @@ class UserController extends Controller
     {
         if (Gate::denies('udpate-user')) return NotAllowedException::notAllowed();
 
-        $user->update($request->validated());
+        $data = $request->validated();
+
+        Storage::disk('public')->delete($user->profile ?? '');
+        Storage::disk('public')->put('users', $data['profile'] ?? '');
+
+        $user->update($data);
 
         return response()->json(new UserResource($user->load(['userType', 'shop', 'shop.admin'])));
     }
@@ -87,6 +97,8 @@ class UserController extends Controller
                 return response()->json(['errors' => ['next_admin_shop_id' => ['O próximo dono da loja não pertence à mesma.']]]);
             }
         }
+
+        Storage::disk('public')->delete($user->profile ?? '');
 
         $user->comments()->forceDelete();
         $user->products()->delete();

@@ -45,6 +45,8 @@ class ShopController extends Controller
 
         $data['admin_id'] = auth()->user()->id;
 
+        Storage::disk('public')->put('shops', $data['profile'] ?? '');
+
         $result = Shop::create($data);
 
         return response()->json(new ShopResource($result->load('admin')));
@@ -69,6 +71,8 @@ class ShopController extends Controller
     {
         if (Gate::denies('update-shop')) return NotAllowedException::notAllowed();
 
+        Storage::disk('public')->delete($shop->profile ?? '');
+
         $shop->update($request->validated());
 
         return response()->json(new ShopResource($shop));
@@ -85,7 +89,7 @@ class ShopController extends Controller
 
         $data = $request->validated();
 
-        isset($shop->profile) ? Storage::disk('public')->delete($shop->profile) : null;
+        Storage::disk('public')->delete($shop->profile ?? '');
 
         $data['profile'] = Storage::disk('public')->put('shops', $data['profile']);
 
@@ -156,6 +160,8 @@ class ShopController extends Controller
 
         $shop->admin()->update(['shop_id' => null]);
         User::where('shop_id', $shop->id)->update(['shop_id' => null]);
+
+        Storage::disk('public')->delete($shop->profile ?? '');
 
         $shop->delete();
 

@@ -14,6 +14,11 @@ class Cart extends Model
         'user_id',
         'product_id',
         'product_quantity',
+        'finished'
+    ];
+
+    protected $attributes = [
+        'finished' => false,
     ];
 
     /**

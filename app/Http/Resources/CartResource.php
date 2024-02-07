@@ -17,6 +17,7 @@ class CartResource extends JsonResource
         return [
             'product_id' => $this->product_id,
             'product_quantity' => $this->product_quantity,
+            'finished' => $this->finished,
             'user' => new UserResource($this->whenLoaded('user')),
             'product' => new ProductResource($this->whenLoaded('product')),
         ];

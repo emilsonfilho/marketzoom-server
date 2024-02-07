@@ -39,6 +39,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/add-item/{product}', [CartController::class, 'addItem']);
         Route::delete('/remove-item/{product}', [CartController::class, 'removeItem']);
         Route::delete('/remove-product/{product}', [CartController::class, 'removeProduct']);
+
+        Route::prefix('checkout')->group(function () {
+            Route::put('/all', [CartController::class, 'checkout']);
+            Route::put('/product/{product}', [CartController::class, 'checkoutProduct']);
+            Route::put('/item/{product}', [CartController::class, 'checkoutItem']);
+        });
     });
 
     Route::apiResource('/users', UserController::class)->only(['store', 'show', 'update', 'destroy']);

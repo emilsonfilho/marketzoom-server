@@ -47,7 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
-    Route::apiResource('/users', UserController::class)->only(['store', 'show', 'update', 'destroy']);
+    Route::apiResource('/users', UserController::class)->only(['show', 'update', 'destroy']);
     Route::apiResource('/products', ProductController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('/comments', CommentController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('/categories', CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -70,7 +70,7 @@ Route::put('/users/{user}/reset-password', [UserController::class, 'resetPasswor
 Route::get('/products/search/{search?}', [ProductController::class, 'search']);
 Route::get('/categories/available', [CategoryController::class, 'available']);
 
-Route::apiResource('/users', UserController::class)->only(['show']);
+Route::apiResource('/users', UserController::class)->only(['store', 'show']);
 Route::apiResource('/comments', CommentController::class)->only(['show']);
 Route::apiResource('/products', ProductController::class)->only(['index', 'show']);
 Route::apiResource('/categories', CategoryController::class)->only(['show']);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\AuthException;
 use App\Http\Requests\AuthUserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Symphony\Component\HttpFoundation\Response;
@@ -21,15 +22,14 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'user_id' => $user->id,
-            'user_name' => $user->name,
+            'user' => new UserResource($user),
             'token' => $user->createToken($user->name)->plainTextToken,
         ]);
     }
 
     /**
      * POST api/auth/logout
-     * 
+     *
      * Logout an user
      */
     public function logout()

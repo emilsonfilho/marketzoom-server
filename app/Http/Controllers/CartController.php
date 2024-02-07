@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NotAllowedException;
+use App\Http\Requests\CheckoutItemRequest;
 use App\Http\Requests\ItemRequest;
 use App\Http\Resources\CartResource;
 use App\Models\Cart;
@@ -10,6 +11,7 @@ use App\Models\Product;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Gate;
 use Knuckles\Scribe\Attributes\Group;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Group(name: 'Carrinhos', description: 'Gestão dos carrinhos')]
 class CartController extends Controller
@@ -19,7 +21,7 @@ class CartController extends Controller
      *
      * Display the cart of the logged user.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
 
@@ -31,7 +33,7 @@ class CartController extends Controller
      *
      * Store a newly created resource in storage.
      */
-    public function addItem(ItemRequest $request, Product $product)
+    public function addItem(ItemRequest $request, Product $product): JsonResponse
     {
         if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
 
@@ -66,7 +68,7 @@ class CartController extends Controller
      *
      * Remove an item from the cart
      */
-    public function removeItem(ItemRequest $request, Product $product)
+    public function removeItem(ItemRequest $request, Product $product): JsonResponse
     {
         if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
 
@@ -105,7 +107,7 @@ class CartController extends Controller
      *
      * Removes the entirely product from the cart
      */
-    public function removeProduct(Product $product)
+    public function removeProduct(Product $product): JsonResponse
     {
         if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
 
@@ -122,12 +124,90 @@ class CartController extends Controller
         return response()->json($this->getUserCart());
     }
 
+    /**
+     * PUT api/cart/checkout/product/{product}
+     *
+     * Checkout a product
+     */
+    public function checkoutProduct(Product $product): JsonResponse
+    {
+        if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
+
+        $cart_field = $this->getCartFieldQuery($product->id);
+
+        $cart_field->update([
+            'finished' => true,
+        ]);
+
+        return response()->json($this->getUserCart());
+    }
+
+    /**
+     * PUT api/cart/checkout/item/{product}
+     */
+    public function checkoutItem(CheckoutItemRequest $request, Product $product): JsonResponse
+    {
+        if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
+
+        $quantity_to_buy = $request->validated('quantity');
+
+        $cart_field_query = $this->getCartFieldQuery($product->id);
+        $quantity_ordered = $cart_field_query->first()->product_quantity;
+
+        if ($quantity_to_buy > $quantity_ordered) {
+            return response()->json([
+                'error' => 'Você não pode comprar um número acima do que pediu.'
+            ]);
+        } else if ($quantity_to_buy == $quantity_ordered) {
+            $cart_field_query->update([
+                'finished' => true
+            ]);
+        } else {
+            $cart_field_query->update([
+                'product_quantity' => $quantity_ordered - $quantity_to_buy,
+            ]);
+
+            Cart::create([
+                'user_id' => auth()->id(),
+                'product_id' => $product->id,
+                'product_quantity' => $quantity_to_buy,
+                'finished' => true,
+            ]);
+        }
+
+        return response()->json($this->getUserCart());
+    }
+
+    /**
+     * PUT api/cart/checkout/all
+     *
+     * Checkout all the products in the user's cart
+     */
+    public function checkout(): JsonResponse
+    {
+        if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
+
+        $cart = Cart::with('product')->where('user_id', auth()->id())->groupBy('user_id', 'carts.id')->update([
+            'finished' => true,
+        ]);
+
+        return response()->json(CartResource::collection($this->getUserCart()));
+    }
+
     private function getUserCart(): ResourceCollection
     {
-        return CartResource::collection(Cart::with('product')->where('user_id', auth()->id())->groupBy('user_id', 'carts.id')->get());
+        return CartResource::collection(Cart::with('product')->where('user_id', auth()->id())->where('finished', false)->groupBy('user_id', 'carts.id')->get());
     }
 
     private function getCartField(int $product_id) {
-        return Cart::where('user_id', auth()->id())->where('product_id', $product_id)->first();
+        return Cart::where('user_id', auth()->id())->where('product_id', $product_id)->where('finished', false)->first();
+    }
+
+    private function getUserCartQuery() {
+        return Cart::with('product')->where('user_id', auth()->id())->where('finished', false);
+    }
+
+    private function getCartFieldQuery(int $product_id) {
+        return Cart::where('user_id', auth()->id())->where('product_id', $product_id)->where('finished', false);
     }
 }

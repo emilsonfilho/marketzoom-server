@@ -65,7 +65,7 @@ class ProductImageController extends Controller
     public function destroy(ProductImage $productImage)
     {
         if (Product::withCount('images')->find($productImage->product->id)->images_count == 1) {
-            return response()->json(['messages' => ['error' => 'Você não pode excluir essa foto pois deve haver pelo menos uma foto no produto.']]);
+            return response()->json(['error' => 'Você não pode excluir essa foto pois deve haver pelo menos uma foto no produto.'], 400);
         }
 
         Storage::disk('public')->delete($productImage->image);

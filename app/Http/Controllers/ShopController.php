@@ -112,7 +112,7 @@ class ShopController extends Controller
         if (User::where('id', $new_admin_id)->first()->shop_id === $shop->id) {
             $shop->update(['admin_id' => $new_admin_id]);
         } else {
-            return response()->json(['messages' => ['new_admin_id' => ['O novo administrador da loja não pertence à mesma.']]]);
+            return response()->json(['error' => 'O novo administrador da loja não pertence à mesma.'], 400);
         }
 
         return response()->json(new ShopResource($shop));

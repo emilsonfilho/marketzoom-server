@@ -46,7 +46,7 @@ class CartController extends Controller
         $quantity_ordered = $data['product_quantity'];
 
         if ($current_product_stock < $quantity_ordered)
-            return response()->json(['error' => 'Você não pode pedir a mais do que tem no estoque!']);
+            return response()->json(['error' => 'Você não pode pedir a mais do que tem no estoque!'], 400);
 
         $product->update([
             'stock_quantity' => $current_product_stock - $quantity_ordered,
@@ -82,7 +82,7 @@ class CartController extends Controller
         if ($quantity_to_exclude > $quantity_ordered) {
             return response()->json([
                 'error' => 'Você não pode excluir um número acima do que pediu.'
-            ]);
+            ], 400);
         } else if ($quantity_to_exclude == $quantity_ordered) {
             $product->update([
                 'stock_quantity' => $current_product_stock + $quantity_ordered,
@@ -159,7 +159,7 @@ class CartController extends Controller
         if ($quantity_to_buy > $quantity_ordered) {
             return response()->json([
                 'error' => 'Você não pode comprar um número acima do que pediu.'
-            ]);
+            ], 400);
         } else if ($quantity_to_buy == $quantity_ordered) {
             $cart_field_query->update([
                 'finished' => true

@@ -94,7 +94,7 @@ class UserController extends Controller
             if ($user->shop_id === $next_admin->shop_id) {
                 $next_admin->shop->update(['admin_id' => $next_admin->id]);
             } else {
-                return response()->json(['errors' => ['next_admin_shop_id' => ['O próximo dono da loja não pertence à mesma.']]]);
+                return response()->json(['error' => 'O próximo dono da loja não pertence à mesma.'], 400);
             }
         }
 

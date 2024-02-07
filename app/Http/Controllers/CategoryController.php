@@ -58,7 +58,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        return response()->json(CategoryResource::collection($category->load('products')));
+        return response()->json(new CategoryResource($category->load('products')));
     }
 
     /**

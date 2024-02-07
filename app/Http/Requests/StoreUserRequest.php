@@ -23,6 +23,7 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
+            'username' => ['required', 'string'],
             'email' => ['required', 'email'],
             'password' => ['required', 'string', 'regex:/[A-Z]/', 'regex:/[0-9]/'],
             'profile' => ['nullable', 'file']
@@ -34,6 +35,8 @@ class StoreUserRequest extends FormRequest
         return [
             'name.required' => 'O campo de nome é obrigatório.',
             'name.string' => 'O campo de nome deve ser uma string',
+            'username.required' => 'O campo de nome de usuário é obrigatório.',
+            'username.string' => 'O campo de nome de usuário deve ser uma string',
             'email.required' => 'O campo de email é obrigatório.',
             'email.email' => 'O campo de e-mail deve ser um email válido.',
             'password.required' => 'O campo de senha deve ser obrigatório',

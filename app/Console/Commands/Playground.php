@@ -42,10 +42,6 @@ class Playground extends Command
 
         // Product::factory()->create();
 
-        Cart::factory([
-            'user_id' => 1,
-            ])->create();
-
         // ModelsComment::factory()->create();
 
         // CategoryProduct::factory()->create();

@@ -144,8 +144,10 @@ class CartController extends Controller
 
     /**
      * PUT api/cart/checkout/item/{product}
+     *
+     * Checkout a certain quantity of product available in the user's cart
      */
-    public function checkoutItem(CheckoutItemRequest $request, Product $product): JsonResponse
+    public function checkoutItem(ItemRequest $request, Product $product): JsonResponse
     {
         if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
 
@@ -187,7 +189,7 @@ class CartController extends Controller
     {
         if (Gate::denies('is-user')) return NotAllowedException::notAllowed();
 
-        $cart = Cart::with('product')->where('user_id', auth()->id())->groupBy('user_id', 'carts.id')->update([
+        $this->getUserCartQuery()->update([
             'finished' => true,
         ]);
 
@@ -197,6 +199,10 @@ class CartController extends Controller
     private function getUserCart(): ResourceCollection
     {
         return CartResource::collection(Cart::with('product')->where('user_id', auth()->id())->where('finished', false)->groupBy('user_id', 'carts.id')->get());
+    }
+
+    private function getUserCartQuery() {
+        return Cart::with('product')->where('user_id', auth()->id())->where('finished', false);
     }
 
     private function getCartField(int $product_id) {

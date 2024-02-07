@@ -203,10 +203,6 @@ class CartController extends Controller
         return Cart::where('user_id', auth()->id())->where('product_id', $product_id)->where('finished', false)->first();
     }
 
-    private function getUserCartQuery() {
-        return Cart::with('product')->where('user_id', auth()->id())->where('finished', false);
-    }
-
     private function getCartFieldQuery(int $product_id) {
         return Cart::where('user_id', auth()->id())->where('product_id', $product_id)->where('finished', false);
     }

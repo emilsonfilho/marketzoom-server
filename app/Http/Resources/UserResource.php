@@ -20,6 +20,7 @@ class UserResource extends JsonResource
             'user_type_id' => $this->user_type_id,
             'shop_id' => $this->shop_id,
             'name' => $this->name,
+            'username' => $this->username,
             'email' => $this->email,
             'profile' => $this->profile,
             'user_type' => new UserTypeResource($this->whenLoaded('userType')),

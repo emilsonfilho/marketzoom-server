@@ -7,7 +7,7 @@ use App\Http\Requests\AuthUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Symphony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
@@ -39,5 +39,7 @@ class AuthController extends Controller
         $user->tokens()->delete();
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
+
+
     }
 }

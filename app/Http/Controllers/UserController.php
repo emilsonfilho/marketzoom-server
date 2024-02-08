@@ -108,7 +108,7 @@ class UserController extends Controller
     }
 
     /**
-     * POST api/users/{user}/salesperson
+     * PUT api/users/{user}/salesperson
      *
      * Makes someone a salesperson
      */

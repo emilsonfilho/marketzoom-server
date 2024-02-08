@@ -31,10 +31,43 @@ class CategoryController extends Controller
      * Display a listing of the available resource.
      */
     public function available() {
-        $result = Category::has('products')->get();
+        $result = Category::has('products')->where('showed', true)->get();
 
         return response()->json(CategoryResource::collection($result));
     }
+
+    /**
+     * PUT api/categories/{category}/display
+     *
+     * Makes a category appear on the home screen
+     */
+    public function display(Category $category) {
+        $quantity_shown = Category::where('showed', true)->count();
+
+        if ($quantity_shown >= 4) {
+            return response()->json(['error' => 'Você não pode mostrar mais do que quatro categorias no menu.'], 400);
+        }
+
+        $category->update([
+            'showed' => true
+        ]);
+
+        return response()->json(new CategoryResource($category->load('products')));
+    }
+
+    /**
+     * PUT api/categories/{category}/hide
+     *
+     * Remove a category from the home screen display
+     */
+    public function hide(Category $category) {
+        $category->update([
+            'showed' => false,
+        ]);
+
+        return response()->json(new CategoryResource($category->load('products')));
+    }
+
 
     /**
      * POST api/categories

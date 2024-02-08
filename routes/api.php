@@ -47,6 +47,11 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
+    Route::prefix('categories')->group(function () {
+        Route::put('/{category}/display', [CategoryController::class, 'display']);
+        Route::put('/{category}/hide', [CategoryController::class, 'hide']);
+    });
+
     Route::apiResource('/users', UserController::class)->only(['show', 'update', 'destroy']);
     Route::apiResource('/products', ProductController::class)->only(['store', 'update', 'destroy']);
     Route::apiResource('/comments', CommentController::class)->only(['store', 'update', 'destroy']);

@@ -13,7 +13,12 @@ class Category extends Model
     protected $fillable = [
         'name',
         'slogan',
-        'icon'
+        'icon',
+        'showed',
+    ];
+
+    protected $attributes = [
+        'showed' => false,
     ];
 
     /**

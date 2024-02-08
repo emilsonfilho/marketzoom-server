@@ -44,7 +44,9 @@ class Playground extends Command
 
         // ModelsComment::factory()->create();
 
-        // CategoryProduct::factory()->create();
+        // CategoryProduct::factory([
+        //     'showed' => true,
+        // ])->create();
 
         // User::factory()->create();
 

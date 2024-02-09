@@ -61,7 +61,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/product-images', ProductImageController::class)->only(['store', 'udpate', 'destroy']);
     Route::apiResource('/user_types', UserTypeController::class);
 
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::prefix('auth')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::post('/user', [AuthController::class, 'show']);
+    });
 });
 
 // ---------------------------------------------------------------------------------

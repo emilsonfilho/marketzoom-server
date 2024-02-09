@@ -40,6 +40,14 @@ class AuthController extends Controller
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
 
+    }
 
+    public function show()
+    {
+        $user = auth()->user();
+
+        return response()->json([
+            "user" => $user
+        ]);
     }
 }

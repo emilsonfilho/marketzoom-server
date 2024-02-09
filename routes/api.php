@@ -63,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
-        Route::post('/user', [AuthController::class, 'show']);
+        Route::get('/user', [AuthController::class, 'show']);
     });
 });
 

@@ -114,7 +114,7 @@ class ProductController extends Controller
     {
         if (!$search) return response()->json(null, Response::HTTP_NO_CONTENT);
 
-        $result = Product::with(['user', 'shop', 'comments', 'comments.user', 'images'])->where('name', 'like', "%{$search}%")->get();
+        $result = Product::with(['user', 'shop', 'comments', 'comments.user', 'images'])->whereRaw("LOWER(UNACCENT(name)) LIKE LOWER(UNACCENT(?))", ["%$search%"])->get();
 
         return response()->json(ProductResource::collection($result));
     }
